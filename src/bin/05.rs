@@ -208,7 +208,7 @@ impl RangeMap2 {
 
 pub fn part_two(input: &str) -> Option<u64> {
     let almanac = Almanac2::new(input);
-    ((0 as u64)..(200000000 as u64))
+    (0_u64..200000000_u64)
         .into_par_iter()
         .filter(|location| {
             let humidity = almanac.humidity_to_location.get_source(location);

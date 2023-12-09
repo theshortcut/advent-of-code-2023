@@ -39,10 +39,11 @@ pub fn part_two(input: &str) -> Option<u32> {
                 .chars()
                 .enumerate()
                 .filter_map(|(pos, c)| {
-                    if let Some(digit) = c.to_string().parse().ok() {
-                        return Some((pos as u32, digit));
+                    if let Ok(digit) = c.to_string().parse() {
+                        Some((pos as u32, digit))
+                    } else {
+                        None
                     }
-                    None
                 })
                 .collect();
             let first_digit = spelled_digits_with_position

@@ -40,8 +40,8 @@ fn parse(input: &str) -> HashMap<u32, Card> {
 pub fn part_one(input: &str) -> Option<u32> {
     let cards = parse(input);
     let sum = cards
-        .iter()
-        .map(|(_, c)| {
+        .values()
+        .map(|c| {
             let winners = c
                 .candidates
                 .iter()
@@ -50,7 +50,7 @@ pub fn part_one(input: &str) -> Option<u32> {
             match winners {
                 0 => 0,
                 1 => 1,
-                i => (2 as u32).pow(i - 1),
+                i => (2_u32).pow(i - 1),
             }
         })
         .sum();
@@ -59,12 +59,10 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn part_two(input: &str) -> Option<u32> {
     let cards = parse(input);
-    let mut cards_counts = HashMap::from(
-        cards
-            .keys()
-            .map(|id| (*id, 1 as u32))
-            .collect::<HashMap<u32, u32>>(),
-    );
+    let mut cards_counts = cards
+        .keys()
+        .map(|id| (*id, 1_u32))
+        .collect::<HashMap<u32, u32>>();
     for id in 1..=(cards.len() as u32) {
         let card = cards.get(&id).unwrap();
         let card_count = *cards_counts.get(&id).unwrap();
@@ -75,11 +73,11 @@ pub fn part_two(input: &str) -> Option<u32> {
             .count() as u32;
         for id_delta in 1..=winners {
             if let Some(count) = cards_counts.get_mut(&(id + id_delta)) {
-                *count = *count + card_count;
+                *count += card_count;
             }
         }
     }
-    Some(cards_counts.iter().map(|(_, count)| count).sum())
+    Some(cards_counts.values().sum())
 }
 
 #[cfg(test)]

@@ -33,9 +33,9 @@ fn parse(input: &str) -> (Vec<Instruction>, HashMap<&str, (&str, &str)>) {
 }
 
 fn navigate(
-    starts: &Vec<&str>,
-    ends: &Vec<&str>,
-    instructions: &Vec<Instruction>,
+    starts: &[&str],
+    ends: &[&str],
+    instructions: &[Instruction],
     node_map: &HashMap<&str, (&str, &str)>,
 ) -> u64 {
     let steps = starts
@@ -47,8 +47,8 @@ fn navigate(
 
 fn step<'a>(
     start: &'a str,
-    ends: &Vec<&str>,
-    instructions: &Vec<Instruction>,
+    ends: &[&str],
+    instructions: &[Instruction],
     node_map: &HashMap<&str, (&'a str, &'a str)>,
 ) -> u64 {
     let mut cur = start;
@@ -86,7 +86,7 @@ fn gcd(first: u64, second: u64) -> u64 {
 
 pub fn part_one(input: &str) -> Option<u64> {
     let (instructions, node_map) = parse(input);
-    let steps = navigate(&vec!["AAA"], &vec!["ZZZ"], &instructions, &node_map);
+    let steps = navigate(&["AAA"], &["ZZZ"], &instructions, &node_map);
     Some(steps)
 }
 
