@@ -105,7 +105,6 @@ fn calculate_steps(tiles: &[Vec<Tile>]) -> usize {
     steps / 2
 }
 
-
 pub fn part_one(input: &str) -> Option<u32> {
     let tiles = parse(input);
     let steps = calculate_steps(&tiles);
@@ -177,7 +176,9 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file_part("examples", DAY, 2));
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 2,
+        ));
         assert_eq!(result, Some(10));
     }
 }
