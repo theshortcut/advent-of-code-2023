@@ -46,7 +46,12 @@ fn step(point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> Vec<(Point, Dir)> {
         return vec![];
     }
     let next_coord = point + dir;
-    let next_dirs = match (dir, tiles[next_coord.1][next_coord.0]) {
+    let next_dirs = get_directions(&next_coord, dir, tiles);
+    next_dirs.iter().map(|&d| (next_coord, d)).collect()
+}
+
+fn get_directions(point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> Vec<Dir> {
+    match (dir, tiles[point.1][point.0]) {
         (Dir::North, b'/') => vec![Dir::East],
         (Dir::South, b'/') => vec![Dir::West],
         (Dir::East, b'/') => vec![Dir::North],
@@ -58,15 +63,17 @@ fn step(point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> Vec<(Point, Dir)> {
         (Dir::West | Dir::East, b'|') => vec![Dir::North, Dir::South],
         (Dir::North | Dir::South, b'-') => vec![Dir::West, Dir::East],
         (&dir, _) => vec![dir],
-    };
-    next_dirs.iter().map(|&d| (next_coord, d)).collect()
+    }
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
     let tiles = parse(input);
     let mut energized = HashSet::new();
     let mut seen = HashSet::new();
-    let mut beams = vec![(Point(0, 0), Dir::East)];
+    let mut beams = get_directions(&Point(0, 0), &Dir::East, &tiles)
+        .iter()
+        .map(|&dir| (Point(0, 0), dir))
+        .collect_vec();
     while !beams.is_empty() {
         let (point, dir) = beams.pop().unwrap();
         if !seen.contains(&(point, dir)) {
@@ -97,7 +104,8 @@ mod tests {
     #[test]
     fn test_part_one() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(47));
+        assert_eq!(result, Some(46));
+        assert_eq!(part_one("\\........\n/........"), Some(2));
     }
 
     #[test]
