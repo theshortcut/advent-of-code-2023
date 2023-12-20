@@ -66,35 +66,61 @@ fn get_directions(point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> Vec<Dir> {
     }
 }
 
-pub fn part_one(input: &str) -> Option<u32> {
-    let tiles = parse(input);
+fn trace_and_count(&point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> u32 {
     let mut energized = HashSet::new();
     let mut seen = HashSet::new();
-    let mut beams = get_directions(&Point(0, 0), &Dir::East, &tiles)
+    let mut beams = get_directions(&point, &dir, tiles)
         .iter()
-        .map(|&dir| (Point(0, 0), dir))
+        .map(|&dir| (point, dir))
         .collect_vec();
     while !beams.is_empty() {
         let (point, dir) = beams.pop().unwrap();
         if !seen.contains(&(point, dir)) {
             seen.insert((point, dir));
             energized.insert(point);
-            let mut next = step(&point, &dir, &tiles).iter().copied().collect_vec();
+            let mut next = step(&point, &dir, tiles).iter().copied().collect_vec();
             beams.append(next.as_mut());
         }
     }
-    let mut print = vec![vec!['.'; tiles[0].len()]; tiles.len()];
-    for (Point(x, y), _) in seen {
-        print[y][x] = '#';
-    }
-    for row in print {
-        println!("{}", row.iter().join(""));
-    }
-    Some(energized.len() as u32)
+    energized.len() as u32
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let tiles = parse(input);
+    Some(trace_and_count(&Point(0, 0), &Dir::East, &tiles))
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let tiles = parse(input);
+    let width = tiles[0].len();
+    let height = tiles.len();
+    let starting_beams = (0..height)
+        .flat_map(|y| {
+            (0..width)
+                .flat_map(|x| match (x, y) {
+                    (0, 0) => vec![(Point(x, y), Dir::East), (Point(x, y), Dir::South)],
+                    (0, y) if y == height - 1 => {
+                        vec![(Point(x, y), Dir::East), (Point(x, y), Dir::North)]
+                    }
+                    (x, y) if y == height - 1 && x == width - 1 => {
+                        vec![(Point(x, y), Dir::West), (Point(x, y), Dir::North)]
+                    }
+                    (x, 0) if x == width - 1 => {
+                        vec![(Point(x, y), Dir::West), (Point(x, y), Dir::South)]
+                    }
+                    (0, y) => vec![(Point(x, y), Dir::East)],
+                    (x, y) if x == width - 1 => vec![(Point(x, y), Dir::West)],
+                    (x, 0) => vec![(Point(x, y), Dir::South)],
+                    (x, y) if y == height - 1 => vec![(Point(x, y), Dir::North)],
+                    _ => vec![],
+                })
+                .collect_vec()
+        })
+        .collect_vec();
+    starting_beams
+        .iter()
+        .map(|(point, dir)| trace_and_count(point, dir, &tiles))
+        .max()
 }
 
 #[cfg(test)]
@@ -111,6 +137,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(51));
     }
 }
