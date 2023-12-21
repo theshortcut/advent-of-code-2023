@@ -72,13 +72,13 @@ fn roll(dir: &Dir, platform: &[Vec<u8>]) -> Vec<Vec<u8>> {
             platform
                 .iter()
                 .enumerate()
-                .for_each(|(y, row)| output[y] = consolidate(&row, false));
+                .for_each(|(y, row)| output[y] = consolidate(row, false));
         }
         Dir::East => {
             platform
                 .iter()
                 .enumerate()
-                .for_each(|(y, row)| output[y] = consolidate(&row, true));
+                .for_each(|(y, row)| output[y] = consolidate(row, true));
         }
     }
     output
@@ -97,8 +97,8 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(total)
 }
 
-fn cycle(platform: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
-    let start: Vec<Vec<u8>> = platform.clone();
+fn cycle(platform: &[Vec<u8>]) -> Vec<Vec<u8>> {
+    let start: Vec<Vec<u8>> = platform.to_owned();
     [Dir::North, Dir::West, Dir::South, Dir::East]
         .iter()
         .fold(start, |last, dir| roll(dir, &last))

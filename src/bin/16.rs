@@ -50,7 +50,7 @@ fn step(point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> Vec<(Point, Dir)> {
     next_dirs.iter().map(|&d| (next_coord, d)).collect()
 }
 
-fn get_directions(point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> Vec<Dir> {
+fn get_directions(point: &Point, dir: &Dir, tiles: &[Vec<u8>]) -> Vec<Dir> {
     match (dir, tiles[point.1][point.0]) {
         (Dir::North, b'/') => vec![Dir::East],
         (Dir::South, b'/') => vec![Dir::West],
@@ -69,12 +69,12 @@ fn get_directions(point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> Vec<Dir> {
 fn trace_and_count(&point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> u32 {
     let mut energized = HashSet::new();
     let mut seen = HashSet::new();
-    let mut beams = get_directions(&point, &dir, tiles)
+    let mut beams = get_directions(&point, dir, tiles)
         .iter()
         .map(|&dir| (point, dir))
         .collect_vec();
-    while !beams.is_empty() {
-        let (point, dir) = beams.pop().unwrap();
+    while let Some((point, dir)) = beams.pop() {
+
         if !seen.contains(&(point, dir)) {
             seen.insert((point, dir));
             energized.insert(point);
