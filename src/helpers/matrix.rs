@@ -1,6 +1,8 @@
 use std::{
+    convert::From,
     fmt::Display,
     hash::{Hash, Hasher},
+    ops::{Add, Sub},
 };
 
 use itertools::Itertools;
@@ -37,9 +39,49 @@ pub static CARDINALS: [Dir; 4] = [Dir::N, Dir::E, Dir::S, Dir::W];
 pub static ORDINALS: [Dir; 4] = [Dir::NW, Dir::NE, Dir::SE, Dir::SW];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Point {
-    pub x: usize,
-    pub y: usize,
+pub struct Point<T: Clone = usize> {
+    pub x: T,
+    pub y: T,
+}
+
+impl<T: Copy + Clone + Add<Output = T> + Sub<Output = T>> Point<T> {
+    pub fn moved(&self, dir: &Dir, len: &T) -> Point<T> {
+        let Point { x, y } = self;
+        match dir {
+            Dir::N => Point {
+                x: *x,
+                y: *y - *len,
+            },
+            Dir::E => Point {
+                x: *x + *len,
+                y: *y,
+            },
+            Dir::S => Point {
+                x: *x,
+                y: *y + *len,
+            },
+            Dir::W => Point {
+                x: *x - *len,
+                y: *y,
+            },
+            Dir::NE => Point {
+                x: *x + *len,
+                y: *y - *len,
+            },
+            Dir::SE => Point {
+                x: *x + *len,
+                y: *y + *len,
+            },
+            Dir::SW => Point {
+                x: *x - *len,
+                y: *y + *len,
+            },
+            Dir::NW => Point {
+                x: *x - *len,
+                y: *y - *len,
+            },
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, Eq)]
