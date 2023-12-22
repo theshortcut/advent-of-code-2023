@@ -74,7 +74,6 @@ fn trace_and_count(&point: &Point, dir: &Dir, tiles: &Vec<Vec<u8>>) -> u32 {
         .map(|&dir| (point, dir))
         .collect_vec();
     while let Some((point, dir)) = beams.pop() {
-
         if !seen.contains(&(point, dir)) {
             seen.insert((point, dir));
             energized.insert(point);

@@ -58,7 +58,7 @@ fn parse_two(input: &str) -> Vec<Step> {
             let (_, rest) = line.split_once(' ').unwrap();
             let (_, hex) = rest.split_once(' ').unwrap();
             let len = isize::from_str_radix(&hex[2..7], 16).unwrap();
-            let dir = match &hex[7..hex.len()-1] {
+            let dir = match &hex[7..hex.len() - 1] {
                 "0" => Dir::E,
                 "1" => Dir::S,
                 "2" => Dir::W,
